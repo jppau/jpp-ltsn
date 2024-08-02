@@ -1,0 +1,83 @@
+#!/usr/bin/env node
+/*
+ * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @Date: 2024-08-02 14:27:21
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2024-08-02 15:01:55
+ * @FilePath: /jpp-ltsn/bin/envnode.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+const pkg = require('../package')
+const query = require('..').query
+const update = require('..').update
+
+// 输出结果到命令行窗口
+function printResult(v){
+  update(v).then(dists => {
+    const result = query(dists, v)
+    console.log(result)
+    process.exit()
+  })
+}
+
+function printVersion(){
+  console.log('lstn' + pkg.version)
+  process.exit()
+}
+
+// 命令提示
+function printHelp(code){
+  const lines = [
+    '',
+    '  Usage:',
+    '    ltsn [8]',
+    '',
+    '  Options:',
+    '    -v, --version           print the version of vc',
+    '    -h, --help              display this message',
+    '',
+    '  Examples:',
+    '    $ ltsn 8',
+    ''
+  ]
+  console.log(lines.join('\n'))
+  process.exit(code || 0)
+}
+
+// 包的入口函数，里面对参数做裁剪处理，拿到入参并给予不同入参的处理逻辑
+function main(argv){
+  if(!argv){
+    printHelp(1)
+  }
+  const getArg = function(){
+    let args = argv.shift()
+    args = args.split('=')
+    if(args.length > 1){
+      argv.unshift(args.slice(1).join('='))
+    }
+    return args[0]
+  }
+  let arg
+  while(argv.length){
+    arg = getArg()
+    switch(arg){
+      case '-v':
+      case '-V':
+      case '--version':
+        printVersion()
+        break
+      case '-h': 
+      case '-H': 
+      case '--help': 
+        printHelp()
+        break
+      default:
+        printResult(arg)
+        break
+    }
+  }
+}
+
+// 启动程序就开始执行主函数
+main(process.argv.slice(2))
+module.exports = main
